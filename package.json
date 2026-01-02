@@ -1,0 +1,26 @@
+{
+  "name": "caderno-pro-license-server",
+  "version": "1.0.0",
+  "description": "Servidor de validação de licenças para CADERNO PRO",
+  "main": "license_server.js",
+  "scripts": {
+    "start": "node license_server.js",
+    "dev": "nodemon license_server.js"
+  },
+  "keywords": [
+    "license",
+    "validation",
+    "caderno-pro"
+  ],
+  "author": "Seu Nome",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
