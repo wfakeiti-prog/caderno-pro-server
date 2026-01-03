@@ -438,6 +438,48 @@ app.post('/api/licenses/:key/reset', (req, res) => {
     });
 });
 
+// 9. Resetar Licença - Endpoint compatível com gerador V3
+app.post('/api/licenses/reset', (req, res) => {
+    const { licenseKey } = req.body;
+    
+    if (!licenseKey) {
+        return res.json({ 
+            success: false, 
+            error: 'Chave de licença não fornecida' 
+        });
+    }
+    
+    db.run(`
+        UPDATE licenses 
+        SET status = 'unused',
+            device_fingerprint = NULL,
+            activated_at = NULL,
+            expires_at = NULL
+        WHERE license_key = ?
+    `, [licenseKey], function(err) {
+        if (err) {
+            console.error('Erro ao resetar licença:', err);
+            return res.json({ 
+                success: false, 
+                error: err.message 
+            });
+        }
+        
+        if (this.changes === 0) {
+            return res.json({ 
+                success: false, 
+                error: 'Licença não encontrada' 
+            });
+        }
+        
+        console.log(`✅ Licença resetada: ${licenseKey}`);
+        res.json({ 
+            success: true, 
+            message: 'Licença resetada com sucesso' 
+        });
+    });
+});
+
 // ==================== WEBHOOK PARA PAGAMENTOS ====================
 
 // Exemplo de webhook para Stripe
@@ -504,7 +546,8 @@ app.listen(PORT, () => {
 ║   • GET    /api/licenses           - Listar todas        ║
 ║   • GET    /api/licenses/:key      - Buscar específica   ║
 ║   • POST   /api/licenses/:key/revoke  - Revogar          ║
-║   • POST   /api/licenses/:key/reset   - Resetar          ║
+║   • POST   /api/licenses/:key/reset   - Resetar (URL)    ║
+║   • POST   /api/licenses/reset        - Resetar (Body)   ║
 ║   • DELETE /api/licenses/:key      - Excluir             ║
 ║   • GET    /api/stats              - Estatísticas        ║
 ║                                                           ║
